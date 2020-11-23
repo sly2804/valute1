@@ -22,7 +22,7 @@ class CreateValutesTable extends Migration
             $table->string('english_name', 100);
             $table->string('alphabetic_code', 3);
             $table->integer('digit_code');
-            $table->float('rate');
+            $table->decimal('rate',8,4);
             $table->timestamps();
         });
     }

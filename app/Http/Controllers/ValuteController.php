@@ -101,7 +101,6 @@ class ValuteController extends Controller
                 $objValute->rate = $rate;
                 $objValute->english_name = $englishName[$id];
                 $this->trySave($objValute);
-                
             }
         }
         return response()->json(['status' => 'Valute updated'])->setStatusCode(201);

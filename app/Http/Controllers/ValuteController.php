@@ -80,8 +80,6 @@ class ValuteController extends Controller
             $ii = (string)$i["ID"];
             $englishName[$ii] = $i->EngName;
         }
-        //print_r($english_name);
-        
         foreach ($daily->Valute as $v) {
             $id = (string)$v["ID"];
             $objValute = Valute::where('sec_id', $id)->first();

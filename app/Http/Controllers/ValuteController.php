@@ -27,11 +27,11 @@ class ValuteController extends Controller
         return response()->json($valute)->setStatusCode(200);
     }
     
-    public function create(Request $request)
+    public function create(Request $request,$id)
     {
         $this->valid($request);
         $newData = $this->makeNewData(
-            $request->input('sec_id'),
+            $id,
             $request->input('name'),
             $request->input('alphabetic_code'),
             $request->input('digit_code'),
@@ -45,7 +45,7 @@ class ValuteController extends Controller
     private function valid(Request $request)
     {
         $this->validate($request, [
-            'sec_id' => 'required|max:10',
+            //'sec_id' => 'required|max:10',
             'name' => 'required|max:100',
             'english_name' => 'required|max:100',
             'alphabetic_code' => "required|max:3",
@@ -55,10 +55,10 @@ class ValuteController extends Controller
         return 1;
     }
     
-    private function makeNewData($secId, $name, $alphabeticCode, $digitCode, $rate, $englishName)
+    private function makeNewData($id, $name, $alphabeticCode, $digitCode, $rate, $englishName)
     {
         $newData = [
-            'sec_id' => $secId,
+            'id' => $id,
             'name' => $name,
             'english_name' => $englishName,
             'alphabetic_code' => $alphabeticCode,
@@ -82,10 +82,10 @@ class ValuteController extends Controller
         }
         foreach ($daily->Valute as $v) {
             $id = (string)$v["ID"];
-            $objValute = Valute::where('sec_id', $id)->first();
+            $objValute = Valute::find($id);
             if ($objValute == NULL) {
                 $newData = $this->makeNewData(
-                    $v["ID"],
+                    $id,
                     $v->Name,
                     $v->CharCode,
                     $v->NumCode,

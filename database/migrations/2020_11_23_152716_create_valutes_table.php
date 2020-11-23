@@ -16,14 +16,15 @@ class CreateValutesTable extends Migration
         Schema::create('valutes', function (Blueprint $table) {
     
     
-            $table->bigIncrements('id');
-            $table->string('sec_id', 10);
+            //$table->bigIncrements('id');
+            $table->string('id', 10)->unique();
             $table->string('name', 100);
             $table->string('english_name', 100);
             $table->string('alphabetic_code', 3);
             $table->integer('digit_code');
             $table->decimal('rate',8,4);
             $table->timestamps();
+            $table->primary('id');
         });
     }
 

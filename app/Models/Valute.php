@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Valute extends Model
 {
     protected $fillable = [
-        'sec_id',
+        'id',
         'name',
         'english_name',
         'alphabetic_code',
@@ -18,5 +18,5 @@ class Valute extends Model
         'created_at',
         'updated_at'
     ];
-    
+    public $incrementing = false;
 }

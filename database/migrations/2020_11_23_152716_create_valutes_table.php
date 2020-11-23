@@ -19,7 +19,7 @@ class CreateValutesTable extends Migration
             $table->string('english_name', 100);
             $table->string('alphabetic_code', 3);
             $table->integer('digit_code');
-            $table->decimal('rate', 8, 4);
+            $table->decimal('rate', 12, 9);
             $table->timestamps();
             $table->primary('id');
         });

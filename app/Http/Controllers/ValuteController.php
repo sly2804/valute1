@@ -84,7 +84,6 @@ class ValuteController extends Controller
             $id = (string)$v["ID"];
             $objValute = Valute::where('sec_id', $id)->first();
             if ($objValute == NULL) {
-                
                 $newData = $this->makeNewData(
                     $v["ID"],
                     $v->Name,

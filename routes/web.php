@@ -15,7 +15,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/currencies','ValuteController@readAll');
-$router->get('/currencies/{id}','ValuteController@read');
-$router->post('/currencies','ValuteController@create');
+$router->get('/currencies', 'ValuteController@readAll');
+$router->get('/currencies/{id}', 'ValuteController@read');
+$router->post('/currencies', 'ValuteController@create');
+$router->put('/currencies', 'ValuteController@update');
 

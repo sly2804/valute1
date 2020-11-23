@@ -30,13 +30,15 @@ class ValuteController extends Controller
     public function create(Request $request)
     {
         $this->valid($request);
-        $newData = $this->makeNewData($request);
-        $valute = new Valute($newData);
-        try {
-            $valute->save();
-        } catch (Exeption $e) {
-            return response()->json(['status' => 'Valute not created', 'error' => $e])->setStatusCode(500);
-        }
+        $newData = $this->makeNewData(
+            $request->input('sec_id'),
+            $request->input('name'),
+            $request->input('alphabetic_code'),
+            $request->input('digit_code'),
+            $request->input('rate'),
+            $request->input('english_name')
+        );
+        $valute = $this->createNewValute($newData);
         return response()->json(['status' => 'Valute created', 'id' => $valute->id])->setStatusCode(201);
     }
     
@@ -53,17 +55,83 @@ class ValuteController extends Controller
         return 1;
     }
     
-    private function makeNewData(Request $request)
+    private function makeNewData($secId, $name, $alphabeticCode, $digitCode, $rate, $englishName)
     {
         $newData = [
-            'sec_id' => $request->input('sec_id'),
-            'name' => $request->input('name'),
-            'english_name' => $request->input('english_name'),
-            'alphabetic_code' => $request->input('alphabetic_code'),
-            'digit_code' => $request->input('digit_code'),
-            'rate' => $request->input('rate')
+            'sec_id' => $secId,
+            'name' => $name,
+            'english_name' => $englishName,
+            'alphabetic_code' => $alphabeticCode,
+            'digit_code' => $digitCode,
+            'rate' => $rate
         ];
         return $newData;
+    }
+    
+    public function update()
+    {
+        $date = Date("d/m/Y");
+        $urlDaily = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=$date";
+        $daily = simplexml_load_file($urlDaily);
+        $urlValFull = "http://www.cbr.ru/scripts/XML_valFull.asp";
+        $valFull = simplexml_load_file($urlValFull);
+        $englishName = array();
+        foreach ($valFull->Item as $i) {
+            $ii = (string)$i["ID"];
+            $englishName[$ii] = $i->EngName;
+        }
+        //print_r($english_name);
+        
+        foreach ($daily->Valute as $v) {
+            $id = (string)$v["ID"];
+            $objValute = Valute::where('sec_id', $id)->first();
+            if ($objValute == NULL) {
+                
+                $newData = $this->makeNewData(
+                    $v["ID"],
+                    $v->Name,
+                    $v->CharCode,
+                    $v->NumCode,
+                    $this->rateCalculate($v->Value, $v->Nominal),
+                    $englishName[$id]
+                );
+                $this->createNewValute($newData);
+            } else {
+                $rate = $this->rateCalculate($v->Value, $v->Nominal);
+                $objValute->name = $v->Name;
+                $objValute->digit_code = $v->NumCode;
+                $objValute->alphabetic_code = $v->CharCode;
+                $objValute->rate = $rate;
+                $objValute->english_name = $englishName[$id];
+                $this->trySave($objValute);
+                
+            }
+        }
+        return response()->json(['status' => 'Valute updated'])->setStatusCode(201);
+    }
+    
+    private function rateCalculate($v1, $v2)
+    {
+        $v1 = str_replace(",", ".", $v1);
+        $v = (double)$v1 / $v2;
+        Return $v;
+    }
+    
+    private function createNewValute($newData)
+    {
+        $valute = new Valute($newData);
+        $valute = $this->trySave($valute);
+        return $valute;
+    }
+    
+    private function trySave($valute)
+    {
+        try {
+            $valute->save();
+        } catch (Exeption $e) {
+            return response()->json(['status' => 'Valute not created', 'error' => $e])->setStatusCode(500);
+        }
+        return $valute;
     }
     
 }

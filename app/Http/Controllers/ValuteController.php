@@ -27,7 +27,7 @@ class ValuteController extends Controller
         return response()->json($valute)->setStatusCode(200);
     }
     
-    public function create(Request $request,$id)
+    public function create(Request $request, $id)
     {
         $this->valid($request);
         $newData = $this->makeNewData(
@@ -45,7 +45,6 @@ class ValuteController extends Controller
     private function valid(Request $request)
     {
         $this->validate($request, [
-            //'sec_id' => 'required|max:10',
             'name' => 'required|max:100',
             'english_name' => 'required|max:100',
             'alphabetic_code' => "required|max:3",

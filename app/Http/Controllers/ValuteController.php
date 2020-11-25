@@ -69,6 +69,12 @@ class ValuteController extends Controller
     
     public function update()
     {
+        $this->updateLogic();
+        return response()->json(['status' => 'Valute updated'])->setStatusCode(201);
+    }
+    
+    public function updateLogic()
+    {
         $date = Date("d/m/Y");
         $urlDaily = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=$date";
         $daily = simplexml_load_file($urlDaily);
@@ -102,7 +108,7 @@ class ValuteController extends Controller
                 $this->trySave($objValute);
             }
         }
-        return response()->json(['status' => 'Valute updated'])->setStatusCode(201);
+        return 1;
     }
     
     private function rateCalculate($v1, $v2)
